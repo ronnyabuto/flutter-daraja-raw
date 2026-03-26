@@ -97,8 +97,6 @@ class PaymentNotifier extends Notifier<PaymentState> with WidgetsBindingObserver
   }
 
   // Polls at T+10s, T+30s, T+70s with a hard 90s timeout.
-  // This polling cascade is what Appwrite Realtime replaces in Stage 3 —
-  // a server-side WebSocket event fires the moment the DB record updates.
   void _startPolling(String cid) {
     _cancelTimers();
     _t1 = Timer(const Duration(seconds: 10), () => _poll(cid));

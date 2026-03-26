@@ -6,8 +6,7 @@
 unsimular-pianic-rosalinda.ngrok-free.dev
 ```
 
-This domain is permanent and tied to your ngrok account. It does not change
-between tunnel restarts. The URL itself is stable — the tunnel process is not.
+Permanent domain tied to the ngrok account. Stable between restarts — the tunnel process is not.
 
 ---
 
@@ -17,16 +16,15 @@ between tunnel restarts. The URL itself is stable — the tunnel process is not.
 ngrok http --url=unsimular-pianic-rosalinda.ngrok-free.dev 3000
 ```
 
-> Note: `--domain` is deprecated in ngrok v3.37.2+. Use `--url` instead.
+> Note: `--domain` is deprecated in ngrok v3.37.2+. Use `--url`.
 
-Leave this process running in a dedicated terminal. If it exits, callbacks stop
-arriving immediately — there is no grace period or queuing.
+Keep this running in a dedicated terminal. If it exits, callbacks stop arriving with no grace period or queuing.
 
 ---
 
 ## Verify the tunnel is working
 
-### Test the callback guard (expect HTTP 400 JSON — not an HTML page):
+Test the callback guard — expect HTTP 400 JSON, not an HTML page:
 
 ```bash
 curl -s -w "\nHTTP %{http_code}" \
@@ -35,16 +33,15 @@ curl -s -w "\nHTTP %{http_code}" \
   -d '{"test": true}'
 ```
 
-Expected response:
+Expected:
 ```json
 {"error":"Invalid callback structure"}
 ```
 HTTP 400
 
-If you receive an HTML page from ngrok instead, the free-tier interstitial is
-active and Safaricom's servers will also be blocked. See note below.
+If you get an HTML page, ngrok's free-tier interstitial is active and Safaricom will also be blocked.
 
-### Test server reachability (expect HTTP 500 JSON until PostgreSQL is running):
+Test server reachability — expect HTTP 500 JSON until PostgreSQL is running:
 
 ```bash
 curl -s -w "\nHTTP %{http_code}" \
@@ -55,45 +52,30 @@ curl -s -w "\nHTTP %{http_code}" \
 
 ## ngrok request inspector
 
-URL: http://127.0.0.1:4040
+http://127.0.0.1:4040
 
-Every request Safaricom makes to your callback URL appears here in real time —
-full headers, body, and response. This is the primary debugging tool for
-callback delivery issues. Keep it open during testing.
+Every Safaricom request to the callback URL appears here in real time — full headers, body, and response. Keep it open during testing.
 
 ---
 
 ## Interstitial finding
 
-**No interstitial was observed.** curl to the ngrok domain returned JSON from
-Express directly, with no ngrok HTML page interposing. This means:
+No interstitial was observed. curl to the ngrok domain returned JSON from Express directly. Safaricom can POST to the callback URL without browser interaction.
 
-- Safaricom's servers can POST to the callback URL without browser interaction
-- The free plan's assigned domain works for webhook delivery in this test
-
-This was verified with ngrok v3.37.2 using an authenticated free-tier account
-with a claimed static dev domain. Unauthenticated tunnels and random-URL tunnels
-behave differently — do not assume this result applies to those configurations.
+Verified with ngrok v3.37.2, authenticated free-tier account, static dev domain. Unauthenticated tunnels and random-URL tunnels behave differently.
 
 ---
 
 ## Critical operational note
 
-> **The tunnel must be running for callbacks to reach the server. If the ngrok
-> process dies, callbacks are silently dropped. Safaricom will retry once or
-> twice and then stop. The payment will remain PENDING in the database until
-> the reconciliation endpoint resolves it.**
->
-> This is the problem Appwrite Functions solve in Stage 3. An Appwrite Function
-> URL is permanently live without a running process on your machine — no tunnel,
-> no fragile background process, no missed callbacks.
+If the ngrok process dies, Safaricom's callback has nowhere to land. The payment stays PENDING in the DB. No queuing, no retry on restart.
 
 ---
 
-## Startup checklist (every development session)
+## Startup checklist
 
-1. Start PostgreSQL: `sudo service postgresql start`
-2. Start Express: `cd server && npm run dev`
-3. Start ngrok: `ngrok http --url=unsimular-pianic-rosalinda.ngrok-free.dev 3000`
+1. `sudo service postgresql start`
+2. `cd server && npm run dev`
+3. `ngrok http --url=unsimular-pianic-rosalinda.ngrok-free.dev 3000`
 4. Verify tunnel: run the curl test above, confirm HTTP 400 JSON
 5. Open inspector: http://127.0.0.1:4040

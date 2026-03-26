@@ -1,8 +1,6 @@
 name: flutter_daraja_raw
 description: >
-  Raw Flutter + Express + M-Pesa payment request app.
-  Stage 1 of flutter-daraja-raw — deliberate learning project.
-  No Appwrite, no Realtime. Every pain point is intentional.
+  Flutter M-Pesa payment integration — STK Push via Express and Safaricom Daraja sandbox.
 
 publish_to: 'none'
 version: 1.0.0+1

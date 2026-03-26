@@ -1,7 +1,7 @@
 {
   "name": "flutter-daraja-raw-server",
   "version": "1.0.0",
-  "description": "Express backend for flutter-daraja-raw — deliberate learning project",
+  "description": "Express backend handling M-Pesa STK Push callbacks via Safaricom Daraja API",
   "scripts": {
     "dev": "ts-node src/server.ts",
     "start": "node dist/server.js",
