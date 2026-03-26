@@ -1,0 +1,40 @@
+name: flutter_daraja_raw
+description: >
+  Raw Flutter + Express + M-Pesa payment request app.
+  Stage 1 of flutter-daraja-raw — deliberate learning project.
+  No Appwrite, no Realtime. Every pain point is intentional.
+
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  # Floor set to installed Dart version (3.11.3).
+  # flutter --version confirmed: Dart 3.11.3, Flutter 3.41.5
+  sdk: '>=3.11.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management — Riverpod 3.x.
+  # We use NotifierProvider + Notifier<State> from this package directly.
+  # No code generation (no build_runner, no riverpod_annotation).
+  # Version fetched live from pub.dev API on 2026-03-26: 3.3.1
+  flutter_riverpod: ^3.3.1
+
+  # HTTP calls to the Express server (/mpesa/pay, /mpesa/status).
+  # Version fetched live from pub.dev API on 2026-03-26: 1.6.0
+  http: ^1.6.0
+
+  # Persist the CheckoutRequestID across app restarts.
+  # If the app is killed while a payment is pending, we restore it on relaunch.
+  # Version fetched live from pub.dev API on 2026-03-26: 2.5.5
+  shared_preferences: ^2.5.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
